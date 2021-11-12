@@ -23,7 +23,7 @@ async function run() {
         const productsCollection = database.collection('products');
         const reviewCollection = database.collection('reviews');
         const orderCollection = database.collection('orders');
-        // const userCollection = database.collection('users');
+        const userCollection = database.collection('users');
 
 
         // products api--get--------
@@ -126,6 +126,42 @@ async function run() {
             res.send(result);
 
         });
+
+        // admin--------------
+        app.post('/users', async (req, res) => {
+            const user = req.body;
+            const result = await userCollection.insertOne(user);
+            res.json(result)
+        });
+
+
+        app.put("/admin", async (req, res) => {
+            const filter = { email: req.body.email };
+            const result = await userCollection.find(filter).toArray();
+            if (result) {
+                const result = await userCollection.updateOne(filter, {
+                    $set: { role: "admin" },
+                });
+
+            }
+        });
+
+        app.get("/admin/:email", async (req, res) => {
+            const result = await userCollection
+                .find({ email: req.params.email })
+                .toArray();
+
+            res.send(result);
+        });
+
+
+
+
+
+
+
+
+
 
 
     }
